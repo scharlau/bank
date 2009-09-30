@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Bank Build Script for MSc E-Tech" default="main" basedir=".">
+
+	<property name="app.name" value="bank" />
+	<property name="dist.src" value="${app.name}.jar" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.deploy.dir" value="${build.dir}/deploy" />
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init" depends="clean">
+		<echo message="Using Source directory=${src.dir}" />
+		<echo message="Using Build directory=${build.dir}" />
+
+		<!-- create the requisite directories -->
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${build.deploy.dir}" />
+	</target>
+
+	<target name="compile-java" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" 
+			debug="on" deprecation="on" optimize="off"
+			classpath="${build.classes.dir}" />
+	</target>
+
+	<target name="jar" depends="compile-java">
+		<jar destfile="${build.dir}/deploy/${app.name}.jar" 
+			basedir="${build.classes.dir}" />
+	</target>
+
+	<target name="main" depends="jar">
+	</target>
+
+</project>

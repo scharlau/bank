@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- An Ant build file for the cs3514/cs5540 bank demo application
+	Use the target names further down to specify what you want to build or deploy.
+	There is no target for everything, unless you want to write it ;-)
+
+-->
+
+<project name="Bank Build Script for MSc E-Tech" default="main" basedir=".">
+
+	<!-- need to switch 'username' in app.name value for your username -->
+	<property name="app.name" value="bank" />
+	<property name="dist.src" value="${app.name}.jar" />
+	<property name="build.dir" value="build" />
+	<property name="build.classes.dir" value="${basedir}/build/classes" />
+	<property name="build.deploy.dir" value="${basedir}/build/deploy" />
+	<!-- need to check that junit.jar is at the correct location -->
+	<property name="junit.jar" location="C:\java\eclipse\plugins\org.junit_3.8.1\junit.jar" />
+	<property name="src.dir" value="src" />
+
+	<property name="test.dir" location="${basedir}/test" />
+	<property name="test.build.dir" location="${build.dir}/test" />
+	<property name="test.data.dir" location="${test.build.dir}/data" />
+	<property name="test.reports.dir" location="${test.build.dir}/reports" />
+
+	<!-- use this to set the classpath of the project. Later it gets used under javac. -->
+	<path id="compile.classpath">
+		<pathelement location="${build.classes.dir}" />
+		<pathelement location="${junit.jar}" />
+	</path>
+	
+	 <path id="test.classpath">
+	     <path refid="compile.classpath"/>
+	  	 <pathelement location ="${test.build.dir}" />
+		</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init" depends="clean">
+		<property name="classpath_id" value="compile.classpath" />
+		<property name="classpath" refid="${classpath_id}" />
+		<echo message="Using base classpath=${classpath}" />
+		<echo message="Using Source directory=${src.dir}" />
+		<echo message="Using Build directory=${build.dir}" />
+		<!-- create the requisite directories -->
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${build.dir}/deploy" />
+		<mkdir dir="${test.data.dir}" />
+		<mkdir dir="${test.build.dir}" />
+	</target>
+
+	<target name="compile-java" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" debug="on" deprecation="on" optimize="off">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-test" depends="compile-java">
+		<javac srcdir="${test.dir}" destdir="${test.build.dir}">
+			<classpath refid="test.classpath" />
+		</javac>
+	</target>
+
+	<target name="test-main" depends="compile-test">
+		<junit printsummary="false" haltonfailure="false">
+			<classpath refid="test.classpath" />
+			<formatter type="brief" usefile="false" />
+			<formatter type="xml" />
+			<batchtest todir="${test.data.dir}">
+				<fileset dir="${test.build.dir}" includes="**/*Test.class" />
+			</batchtest>
+		</junit>
+		<junitreport todir="${test.data.dir}">
+			<fileset dir="${test.data.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.reports.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="jar" depends="test-main">
+	
+		<jar destfile="${build.deploy.dir}/${app.name}.jar" 
+			basedir="${build.dir}/classes">
+			<manifest>
+				<attribute name="Main-Class" value="bank.Account"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="main" depends="jar">
+	</target>
+
+	<target name="runMain" depends="jar">
+		<java jar="${build.deploy.dir}/${app.name}.jar" fork="true">
+<classpath>
+<fileset dir="${build.deploy.dir}">
+<include name="*.jar"/>
+</fileset>
+</classpath>
+</java>
+	</target>
+</project>
