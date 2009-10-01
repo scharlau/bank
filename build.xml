@@ -29,10 +29,24 @@
 
 	<target name="jar" depends="compile-java">
 		<jar destfile="${build.dir}/deploy/${app.name}.jar" 
-			basedir="${build.classes.dir}" />
+			basedir="${build.classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="bank.Account"/>
+			</manifest>
+			</jar>
 	</target>
 
 	<target name="main" depends="jar">
+	</target>
+
+	<target name="runMain" depends="jar">
+		<java jar="${build.deploy.dir}/${app.name}.jar" fork="true">
+<classpath>
+<fileset dir="${build.deploy.dir}">
+<include name="*.jar"/>
+</fileset>
+</classpath>
+</java>
 	</target>
 
 </project>

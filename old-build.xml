@@ -14,7 +14,7 @@
 	<property name="build.classes.dir" value="${basedir}/build/classes" />
 	<property name="build.deploy.dir" value="${basedir}/build/deploy" />
 	<!-- need to check that junit.jar is at the correct location -->
-	<property name="junit.jar" location="C:\java\eclipse\plugins\org.junit_3.8.1\junit.jar" />
+	<property name="junit.jar" location="lib/junit.jar" />
 	<property name="src.dir" value="src" />
 
 	<property name="test.dir" location="${basedir}/test" />
